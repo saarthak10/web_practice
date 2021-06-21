@@ -24,9 +24,9 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="../../index3.html" method="post">
+      <form  method="post">
         <div class="input-group mb-3">
-          <input type="email" name="email1" class="form-control" placeholder="Email">
+          <input type="email" name="email_1"  id="email_1" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" name="password1" class="form-control" placeholder="Password">
+          <input type="password" name="password_1"  id = "password_1" class="form-control" placeholder="Password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -73,7 +73,7 @@
         <a href="forgot-password.html">I forgot my password</a>
       </p>
       <p class="mb-0">
-        <a href="register.html" class="text-center">Register a new membership</a>
+        <a href="register.php" class="text-center">Register a new membership</a>
       </p>
     </div>
     <!-- /.login-card-body -->
@@ -95,6 +95,65 @@
 <?php 
        include"phfiles/dbconn.php";
 
+       session_start();
+
+       if(isset($_POST["submit1"])){
+
+        $email_1 = $_POST["email_1"];
+        $password_1 = $_POST["password_1"];
+#----------------------hash of the entered password---------------------------------------------------
+        
+        $hpassword_1 = md5($password_1);
+
+#------------------------------validation of email----------------------------------------------------------
+
+        if(filter_var($email_1,FILTER_VALIDATE_EMAIL)){
+
+
+          $query_email_1 = "select* from users where Email= '$email_1' " ;
+          $query_execute = mysqli_query($connection,$query_email_1);
+
+          $email_1count = mysqli_num_rows($query_execute);
+
+          if($email_1count){
+             
+            $db_data = mysqli_fetch_assoc($query_execute);
+            $db_password = $db_data['Password'];
+            
+            $_SESSION["user"] = $db_data["Name"];
+
+
+#-------------------------------------validating password---------------------------------------
+            if($hpassword_1 === $db_password){
+
+              header("location:projects.php");
+
+            }
+            else{
+              echo"password not correct";
+            }
+
+
+          }
+          else{
+
+            echo"email does not exist";
+          }
+
+
+
+        }
+        else{
+
+          echo"Enter email correctly";
+        }
+
+
+
+
+
+        
+       }
 
 
 
