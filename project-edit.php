@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Project Add</title>
+  <title>AdminLTE 3 | Project Edit</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -535,12 +535,13 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-add.html" class="nav-link active">
+                <a href="../examples/project-add.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Add</p>
                 </a>
+              </li>
               <li class="nav-item">
-                <a href="../examples/project-edit.html" class="nav-link">
+                <a href="../examples/project-edit.html" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Edit</p>
                 </a>
@@ -834,22 +835,37 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Project Add</h1>
+            <h1>Project Edit</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Project Add</li>
+              <li class="breadcrumb-item active">Project Edit</li>
             </ol>
           </div>
         </div>
       </div><!-- /.container-fluid -->
     </section>
+    <?php  
+      include"phfiles/dbconn.php";
+
+      $id=$_GET['ID'];
+
+      $old_data_query = "select* from projects where ID = '$id' ";
+      
+      $old_execute = mysqli_query($connection,$old_data_query);
+    
+        $old_data = mysqli_fetch_assoc($old_execute);
+
+    
+    
+    
+    ?>
 
     <!-- Main content -->
     <section class="content">
-    <form method="POST">  
-    <div class="row">
+      <form  method="POST" >
+      <div class="row">
         <div class="col-md-6">
           <div class="card card-primary">
             <div class="card-header">
@@ -864,28 +880,36 @@
             <div class="card-body">
               <div class="form-group">
                 <label for="inputName">Project Name</label>
-                <input type="text" id="inputName" name="inputName" class="form-control">
+                <input type="text" id="inputName" name="inputName" class="form-control" value="<?php echo $old_data["Project_Name"];  ?>">
               </div>
               <div class="form-group">
                 <label for="inputDescription">Project Description</label>
-                <textarea id="inputDescription"  name="inputDescription" class="form-control" rows="4"></textarea>
+                <textarea id="inputDescription" name ="inputDescription" class="form-control" rows="4"><?php echo $old_data["Description"];  ?></textarea>
               </div>
               <div class="form-group">
-                <label for="status">Status</label>
-                <select  id="status"  name="status" class="form-control custom-select">
-                  <option selected disabled>Select one</option>
-                  <option value="On-Hold">On Hold</option>
-                  <option value = "Cancelled">Canceled</option>
-                  <option value= "Success">Success</option>
-                </select> 
+                <label for="inputStatus">Status</label>
+                <select id="inputStatus"  name = "inputStatus" class="form-control custom-select">
+                  <option disabled>Select one</option>
+                    <?php if($old_data['Status'] == "On-Hold"){  ?>
+                      <option selected value="On-Hold">On Hold</option>  
+                    <?php 
+                    } 
+                    ?>
+                  <?php if($old_data['Status'] == "Cancelled"){    ?>
+                    <option selected  value="Cancelled">Cancelled</option>  
+                    <?php     
+                  } 
+                  ?>
+                 <?php if($old_data['Status']== "Success"){   ?> <option selected  value="Success">Success</option>   <?php  } ?>
+                </select>
               </div>
               <div class="form-group">
                 <label for="inputClientCompany">Client Company</label>
-                <input type="text" name = 'inputClientCompany' id="inputClientCompany" class="form-control">
+                <input type="text" id="inputClientCompany" name =  "inputClilentCompany" class="form-control" value="<?php echo $old_data["Client_Org"];  ?>">
               </div>
               <div class="form-group">
                 <label for="inputProjectLeader">Project Leader</label>
-                <input type="text" id="inputProjectLeader" name="inputProjectLeader" class="form-control">
+                <input type="text" id="inputProjectLeader" name="inputProjectLeader" class="form-control" value="<?php echo $old_data["Project_Lead"];  ?>">
               </div>
             </div>
             <!-- /.card-body -->
@@ -906,16 +930,89 @@
             <div class="card-body">
               <div class="form-group">
                 <label for="inputEstimatedBudget">Estimated budget</label>
-                <input type="number"  name="inputEstimatedBudget" id="inputEstimatedBudget" class="form-control">
+                <input type="number" id="inputEstimatedBudget" name="inputEstimatedBudget" class="form-control" value="<?php echo $old_data["Estimated_budget"];  ?>" step="1">
               </div>
               <div class="form-group">
                 <label for="inputSpentBudget">Total amount spent</label>
-                <input type="number" name = 'inputSpentBudget' id="inputSpentBudget" class="form-control">
+                <input type="number" id="inputSpentBudget" name="inputSpentBudget" class="form-control" value="<?php echo $old_data["Amount_spent"];  ?>" step="1">
               </div>
               <div class="form-group">
                 <label for="inputEstimatedDuration">Estimated project duration</label>
-                <input type="number" name = "inputEstimatedDuration" id="inputEstimatedDuration" class="form-control">
+                <input type="number" id="inputEstimatedDuration"  name="inputEstimatedDuration" class="form-control" value="<?php echo $old_data["Project_duration"];  ?>" step="0.1">
               </div>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title">Files</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                    <th>File Size</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <tr>
+                    <td>Functional-requirements.docx</td>
+                    <td>49.8005 kb</td>
+                    <td class="text-right py-0 align-middle">
+                      <div class="btn-group btn-group-sm">
+                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </td>
+                  <tr>
+                    <td>UAT.pdf</td>
+                    <td>28.4883 kb</td>
+                    <td class="text-right py-0 align-middle">
+                      <div class="btn-group btn-group-sm">
+                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </td>
+                  <tr>
+                    <td>Email-from-flatbal.mln</td>
+                    <td>57.9003 kb</td>
+                    <td class="text-right py-0 align-middle">
+                      <div class="btn-group btn-group-sm">
+                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </td>
+                  <tr>
+                    <td>Logo.png</td>
+                    <td>50.5190 kb</td>
+                    <td class="text-right py-0 align-middle">
+                      <div class="btn-group btn-group-sm">
+                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </td>
+                  <tr>
+                    <td>Contract-10_12_2014.docx</td>
+                    <td>44.9715 kb</td>
+                    <td class="text-right py-0 align-middle">
+                      <div class="btn-group btn-group-sm">
+                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </td>
+
+                </tbody>
+              </table>
             </div>
             <!-- /.card-body -->
           </div>
@@ -925,10 +1022,9 @@
       <div class="row">
         <div class="col-12">
           <a href="#" class="btn btn-secondary">Cancel</a>
-          <input type="submit" name="new_project" id="new_project" value="Create new Porject" class="btn btn-success float-right">
+          <input type="submit"  name= "save_changes" value="Save Changes" class="btn btn-success float-right">
         </div>
       </div>
-</form>
     </section>
     <!-- /.content -->
   </div>
@@ -959,59 +1055,57 @@
 <script src="../../dist/js/demo.js"></script>
 </body>
 </html>
-
 <?php
-  include"phfiles/dbconn.php";
-
-  if(isset($_POST['new_project'])){
+    $id_refer = $_GET["ID"];
+    if(isset($_POST['new_project'])){
 
     $pname= $_POST['inputName'];
     $pdesc = $_POST['inputDescription'];
-#----------------------checking th e value is selected from dropdown or not---------------------------#
-   if(isset($_POST['status'])){
-    $pstatus = $_POST['status'];
-   }
-   else{
+    #----------------------checking th e value is selected from dropdown or not---------------------------#
+    if(isset($_POST['inputStatus'])){
+    $pstatus = $_POST['inputStatus'];
+    }
+    else{
       echo"Select value from the dropdown";
-   
-  }
-#--------------------------------------------------------------------------------------------------#
 
-  $pclientcompany = $_POST['inputClientCompany'];
-  $pleader = $_POST['inputProjectLeader']; 
-  $pbudget = $_POST['inputEstimatedBudget']; 
-  $pspentbudget = $_POST['inputSpentBudget']; 
-  $pduration = $_POST['inputEstimatedDuration']; 
+    }
+    #--------------------------------------------------------------------------------------------------#
 
-  if(empty($pname)|| empty($pdesc)|| empty($pclientcompany)|| empty($pleader) || empty($pbudget)|| empty($pspentbudget) || empty($pduration)){
+    $pclientcompany = $_POST['inputClientCompany'];
+    $pleader = $_POST['inputProjectLeader']; 
+    $pbudget = $_POST['inputEstimatedBudget']; 
+    $pspentbudget = $_POST['inputSpentBudget']; 
+    $pduration = $_POST['inputEstimatedDuration']; 
+
+    if(empty($pname)|| empty($pdesc)|| empty($pclientcompany)|| empty($pleader) || empty($pbudget)|| empty($pspentbudget) || empty($pduration)){
 
     echo"Enter All details";
-  } 
-  else{
+    } 
+    else{
       #----------------------------------------------validating leaders name----------------------------------------------------
       if(preg_match("/^[A-za-z' ]+$/",$pleader)){
 
             
             
-            $insert_query = "insert into projects(Project_Name,Description,Status,Client_Org,Project_Lead,Estimated_budget,Amount_spent,Project_duration) 
-                        values('$pname','$pdesc','$pstatus','$pclientcompany','$pleader','$pbudget','$pspentbudget','$pduration')" ;
-            $execute = mysqli_query($connection,$insert_query);
+           $update_query = "update projects set Project_Name = '$pname',Description='$pdesc' , Status = '$pstatus', Client_Org = '$pclientcompany',
+                Project_Lead='$pleader', Estimated_budget = '$pbudget', Amount_spent = '$pspentbudget' , Project_duration='$pduration'";
+            $execute = mysqli_query($connection,$update_query);
             if( $execute){
               
               ?>
 
-            <script>alert("Project added successfully");</script>
+            <script>alert("Data saved  successfully");</script>
 
         <?php    
             
             }
 
       }
-     
+    
 
-     } 
+    } 
 
 
-  }
-  
-  ?>
+    }
+
+?>
