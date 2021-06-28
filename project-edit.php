@@ -1,3 +1,9 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['user'])){
+        header("location:login.php");
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -529,25 +535,25 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/projects.html" class="nav-link">
+                <a href="../examples/projects.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Projects</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-add.html" class="nav-link">
+                <a href="../examples/project-add.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Add</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-edit.html" class="nav-link active">
+                <a href="../examples/project-edit.php" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Edit</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-detail.html" class="nav-link">
+                <a href="../examples/project-detail.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Detail</p>
                 </a>
@@ -591,13 +597,13 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="../examples/login.html" class="nav-link">
+                    <a href="../examples/login.php" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Login v1</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="../examples/register.html" class="nav-link">
+                    <a href="../examples/register.php" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Register v1</p>
                     </a>
@@ -886,26 +892,27 @@
                 <label for="inputDescription">Project Description</label>
                 <textarea id="inputDescription" name ="inputDescription" class="form-control" rows="4"><?php echo $old_data["Description"];  ?></textarea>
               </div>
+<?php #-------------------------------------------------Previous value in dropdown from database---------------------?>
               <div class="form-group">
-                <label for="inputStatus">Status</label>
-                <select id="inputStatus"  name = "inputStatus" class="form-control custom-select">
-                  <option disabled>Select one</option>
-                    <?php if($old_data['Status'] == "On-Hold"){  ?>
-                      <option selected value="On-Hold">On Hold</option>  
-                    <?php 
-                    } 
-                    ?>
-                  <?php if($old_data['Status'] == "Cancelled"){    ?>
-                    <option selected  value="Cancelled">Cancelled</option>  
-                    <?php     
-                  } 
-                  ?>
-                 <?php if($old_data['Status']== "Success"){   ?> <option selected  value="Success">Success</option>   <?php  } ?>
-                </select>
+              <label for="status">Status</label>
+              <select  id="status"  name="status" class="form-control custom-select">
+                  <option selected disabled>Select one</option>
+                  <option value="On-Hold"   
+                  <?php 
+                    if($old_data["Status"]=="On-Hold"){ echo"SELECTED";}
+                   ?> >On-Hold</option>
+                  
+                  <option value = "Cancelled"
+                  <?php   if($old_data["Status"]=="Cancelled"){ echo"SELECTED";} ?> >Cancelled</option>
+                  
+                  <option value= "Success"
+                  <?php   if($old_data["Status"]=="Success"){ echo"SELECTED";} ?>
+                  >Success</option>
+                </select> 
               </div>
               <div class="form-group">
                 <label for="inputClientCompany">Client Company</label>
-                <input type="text" id="inputClientCompany" name =  "inputClilentCompany" class="form-control" value="<?php echo $old_data["Client_Org"];  ?>">
+                <input type="text" id="inputClientCompany" name =  "inputClientCompany" class="form-control" value="<?php echo $old_data["Client_Org"];  ?>">
               </div>
               <div class="form-group">
                 <label for="inputProjectLeader">Project Leader</label>
@@ -944,6 +951,7 @@
             <!-- /.card-body -->
           </div>
           <!-- /.card -->
+ 
           <div class="card card-info">
             <div class="card-header">
               <h3 class="card-title">Files</h3>
@@ -964,53 +972,34 @@
                   </tr>
                 </thead>
                 <tbody>
-
+                <?php               
+#-----accessing the files and displaying them------------------------  
+                $i = "";
+                $access_files = $old_data["Attachments"];
+                $access_sizes = $old_data["Attachment_sizes"];
+                $access_files = explode(" ",$access_files);
+                $access_sizes = explode(" ", $access_sizes);
+ #----------print_r($access_sizes);-----------------------------------question....?
+      #-------count of the files--------
+                $count  = count($access_files) - 1;          
+                for($i=0;$i < $count; ++$i){
+                  $file_name = $access_files[$i];
+                  $size = $access_sizes[$i +1];
+                  $size_in_kb = floatval($size/1000);
+                ?>
                   <tr>
-                    <td>Functional-requirements.docx</td>
-                    <td>49.8005 kb</td>
+                    <td><?php echo $file_name; ?></td>
+                    <td><?php echo $size_in_kb.'kb'; ?></td>
                     <td class="text-right py-0 align-middle">
                       <div class="btn-group btn-group-sm">
-                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                        <a href="http://localhost/AdminLTE-3.1.0/AdminLTE-3.1.0/pages/examples/phfiles/attachments/<?php echo $file_name;  ?>" class="btn btn-info"  target="_blank"><i class="fas fa-eye"></i></a>
+                        <a href="phfiles/delete.php?ID=<?php echo $id; ?>&file=<?php echo $file_name;   ?>" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                       </div>
                     </td>
                   <tr>
-                    <td>UAT.pdf</td>
-                    <td>28.4883 kb</td>
-                    <td class="text-right py-0 align-middle">
-                      <div class="btn-group btn-group-sm">
-                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                      </div>
-                    </td>
-                  <tr>
-                    <td>Email-from-flatbal.mln</td>
-                    <td>57.9003 kb</td>
-                    <td class="text-right py-0 align-middle">
-                      <div class="btn-group btn-group-sm">
-                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                      </div>
-                    </td>
-                  <tr>
-                    <td>Logo.png</td>
-                    <td>50.5190 kb</td>
-                    <td class="text-right py-0 align-middle">
-                      <div class="btn-group btn-group-sm">
-                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                      </div>
-                    </td>
-                  <tr>
-                    <td>Contract-10_12_2014.docx</td>
-                    <td>44.9715 kb</td>
-                    <td class="text-right py-0 align-middle">
-                      <div class="btn-group btn-group-sm">
-                        <a href="#" class="btn btn-info"><i class="fas fa-eye"></i></a>
-                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                      </div>
-                    </td>
-
+              <?php
+                }
+                 ?>   
                 </tbody>
               </table>
             </div>
@@ -1021,8 +1010,8 @@
       </div>
       <div class="row">
         <div class="col-12">
-          <a href="#" class="btn btn-secondary">Cancel</a>
-          <input type="submit"  name= "save_changes" value="Save Changes" class="btn btn-success float-right">
+          <a href="projects.php" class="btn btn-secondary">Cancel</a>
+          <input type="submit"  name= "save_changes" id = "save_changes" value="Save Changes" class="btn btn-success float-right">
         </div>
       </div>
     </section>
@@ -1056,21 +1045,20 @@
 </body>
 </html>
 <?php
+    
     $id_refer = $_GET["ID"];
-    if(isset($_POST['new_project'])){
+    if(isset($_POST['save_changes'])){
 
     $pname= $_POST['inputName'];
     $pdesc = $_POST['inputDescription'];
-    #----------------------checking th e value is selected from dropdown or not---------------------------#
-    if(isset($_POST['inputStatus'])){
-    $pstatus = $_POST['inputStatus'];
+    #----------------------checking the value is selected from dropdown or not---------------------------#
+    if(isset($_POST['status'])){
+    $pstatus = $_POST['status'];
     }
     else{
       echo"Select value from the dropdown";
 
     }
-    #--------------------------------------------------------------------------------------------------#
-
     $pclientcompany = $_POST['inputClientCompany'];
     $pleader = $_POST['inputProjectLeader']; 
     $pbudget = $_POST['inputEstimatedBudget']; 
@@ -1088,7 +1076,7 @@
             
             
            $update_query = "update projects set Project_Name = '$pname',Description='$pdesc' , Status = '$pstatus', Client_Org = '$pclientcompany',
-                Project_Lead='$pleader', Estimated_budget = '$pbudget', Amount_spent = '$pspentbudget' , Project_duration='$pduration'";
+                Project_Lead='$pleader', Estimated_budget = '$pbudget', Amount_spent = '$pspentbudget' , Project_duration='$pduration'  where ID='$id_refer'";
             $execute = mysqli_query($connection,$update_query);
             if( $execute){
               
@@ -1101,11 +1089,6 @@
             }
 
       }
-    
-
     } 
-
-
-    }
-
+  }
 ?>

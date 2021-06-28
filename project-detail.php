@@ -1,3 +1,13 @@
+<?php
+
+    session_start();
+    if(!isset($_SESSION['user'])){
+
+        header("location:login.php");
+
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -529,25 +539,25 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/projects.html" class="nav-link">
+                <a href="../examples/projects.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Projects</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-add.html" class="nav-link">
+                <a href="../examples/project-add.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Add</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-edit.html" class="nav-link">
+                <a href="../examples/project-edit.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Edit</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-detail.html" class="nav-link active">
+                <a href="../examples/project-detail.php" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Detail</p>
                 </a>
@@ -592,13 +602,13 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="../examples/login.html" class="nav-link">
+                    <a href="../examples/login.php" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Login v1</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="../examples/register.html" class="nav-link">
+                    <a href="../examples/register.php" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Register v1</p>
                     </a>
@@ -985,31 +995,41 @@
               </div>
 
               <h5 class="mt-5 text-muted">Project files</h5>
+           
               <ul class="list-unstyled">
+              <?php    # accessing the project files again
+                 $i = "";    
+                $files_access = $row['Attachments'];
+                $files_access = explode(" ",$files_access);
+                $count = count($files_access) - 1 ;
+                for($i=0;$i<$count;$i++){
+                    $file = $files_access[$i];
+                ?>
                 <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
+                  <a href="http://localhost/AdminLTE-3.1.0/AdminLTE-3.1.0/pages/examples/phfiles/attachments/<?php echo $file;  ?>" class="btn-link text-secondary" target="_blank"><i class="far fa-fw fa-file-word"></i> <?php echo $file;  ?></a>
                 </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-flatbal.mln</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
-                </li>
-                <li>
-                  <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
-                </li>
+              <?php 
+                }  #------------closing brackets of the loop--------------------
+                ?>      
               </ul>
-              <div class="text-center mt-5 mb-3">
-                <a href="#" class="btn btn-sm btn-primary">Add files</a>
+              <div class="text-center mt-5 mb-3">                
+                  <input type="file" id="upload" style="display: none;"/>
+                <a href="" id="file_upload" class="btn btn-sm btn-primary">Add files</a>
                 <a href="#" class="btn btn-sm btn-warning">Report contact</a>
               </div>
             </div>
           </div>
         </div>
         <!-- /.card-body -->
+<!--  script tag to use button as input type file -->
+        <script> 
+        $(function(){
+                  $("#file_upload").on('click', function(e){
+                  e.preventDefault();
+                  $("#upload:hidden").trigger('click');
+              });
+          });
+       </script>
       </div>
       <!-- /.card -->
 

@@ -11,16 +11,5 @@
 
     if($exec_query){
         header("Location:projects.php");
-
-
-
     }
-
-
-
-
-
-
-
-
 ?>

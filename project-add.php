@@ -1,3 +1,15 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['user'])){
+
+        header("location:login.php");
+
+    }
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -529,24 +541,24 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/projects.html" class="nav-link">
+                <a href="../examples/projects.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Projects</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-add.html" class="nav-link active">
+                <a href="../examples/project-add.php" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Add</p>
                 </a>
               <li class="nav-item">
-                <a href="../examples/project-edit.html" class="nav-link">
+                <a href="../examples/project-edit.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Edit</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="../examples/project-detail.html" class="nav-link">
+                <a href="../examples/project-detail.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Project Detail</p>
                 </a>
@@ -848,7 +860,7 @@
 
     <!-- Main content -->
     <section class="content">
-    <form method="POST">  
+    <form method="POST" enctype="multipart/form-data">  
     <div class="row">
         <div class="col-md-6">
           <div class="card card-primary">
@@ -917,10 +929,35 @@
                 <input type="number" name = "inputEstimatedDuration" id="inputEstimatedDuration" class="form-control">
               </div>
             </div>
+            
             <!-- /.card-body -->
+          </div>
+          <!--/.card for file upload-->
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title">Files</h3>
+
+              <div class="card-tools">
+
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="uploaded_files[]">UPLOAD </label>
+                <input type="file"  name="uploaded_files[]"   name="uploaded_files" class="form-control"  multiple/>
+              </div>
+             
+            </div>
+            
+            <!-- /.card-body file upload-->
           </div>
           <!-- /.card -->
         </div>
+        
       </div>
       <div class="row">
         <div class="col-12">
@@ -967,51 +1004,65 @@
 
     $pname= $_POST['inputName'];
     $pdesc = $_POST['inputDescription'];
-#----------------------checking th e value is selected from dropdown or not---------------------------#
-   if(isset($_POST['status'])){
-    $pstatus = $_POST['status'];
-   }
-   else{
-      echo"Select value from the dropdown";
-   
-  }
-#--------------------------------------------------------------------------------------------------#
+#----------------------checking the value is selected from dropdown or not---------------------------#
+      if(isset($_POST['status'])){
+        $pstatus = $_POST['status'];
+      }
+      else{
+          echo"Select value from the dropdown";
+          }
 
-  $pclientcompany = $_POST['inputClientCompany'];
-  $pleader = $_POST['inputProjectLeader']; 
-  $pbudget = $_POST['inputEstimatedBudget']; 
-  $pspentbudget = $_POST['inputSpentBudget']; 
-  $pduration = $_POST['inputEstimatedDuration']; 
+    $pclientcompany = $_POST['inputClientCompany'];
+    $pleader = $_POST['inputProjectLeader']; 
+    $pbudget = $_POST['inputEstimatedBudget']; 
+    $pspentbudget = $_POST['inputSpentBudget']; 
+    $pduration = $_POST['inputEstimatedDuration']; 
 
+#----check whether any field is emty----------
   if(empty($pname)|| empty($pdesc)|| empty($pclientcompany)|| empty($pleader) || empty($pbudget)|| empty($pspentbudget) || empty($pduration)){
 
-    echo"Enter All details";
-  } 
+      echo"Enter All details";
+    } 
   else{
-      #----------------------------------------------validating leaders name----------------------------------------------------
+      #--------------------validating leaders name-----------
       if(preg_match("/^[A-za-z' ]+$/",$pleader)){
+#checking whether files has been uploaded or not------------
+        if(isset($_FILES['uploaded_files'])){
+          $filename = "";
+          $file_tmp = "";  #------temporary location---------
+          $file_size = "";
+          $file_location = "phfiles/attachments/";
+          $data = '';  # variable to store filenames in the database
+          $data_sizes = " ";# variable to store file sizes
 
-            
-            
-            $insert_query = "insert into projects(Project_Name,Description,Status,Client_Org,Project_Lead,Estimated_budget,Amount_spent,Project_duration) 
-                        values('$pname','$pdesc','$pstatus','$pclientcompany','$pleader','$pbudget','$pspentbudget','$pduration')" ;
+
+#-------------------------moving all the uploaded files from temporary location to their destination------------          
+          foreach($_FILES['uploaded_files']['name'] as $key => $value){
+            $filename = $_FILES['uploaded_files']['name'][$key];
+            $file_tmp = $_FILES['uploaded_files']['tmp_name'][$key];
+            $file_size = $_FILES['uploaded_files']['size'][$key];
+            move_uploaded_file($file_tmp,$file_location.$filename);
+            $data .=$filename." ";
+            $data_sizes .=$file_size." ";    
+           }
+           $insert_query = "insert into projects(Project_Name,Description,Status,Client_Org,Project_Lead,Estimated_budget,Amount_spent,Project_duration,Attachments,Attachment_sizes) 
+                        values('$pname','$pdesc','$pstatus','$pclientcompany','$pleader','$pbudget','$pspentbudget','$pduration','$data','$data_sizes')" ;
             $execute = mysqli_query($connection,$insert_query);
             if( $execute){
-              
-              ?>
-
+                         ?>
             <script>alert("Project added successfully");</script>
-
         <?php    
-            
-            }
-
+                        
+        }
+       }
+       else{
+          ?>
+         
+          <script> alert("Please Upload files ");</script>
+       
+       <?php
+       }
       }
-     
-
-     } 
-
-
+    } 
   }
-  
-  ?>
+?>
