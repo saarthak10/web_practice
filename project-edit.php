@@ -854,7 +854,8 @@
     </section>
     <?php  
       include"phfiles/dbconn.php";
-
+#---checkinhg whether ID is in the url or not if not redirect to the projects page
+      if(isset($_GET['ID'])){
       $id=$_GET['ID'];
 
       $old_data_query = "select* from projects where ID = '$id' ";
@@ -862,7 +863,10 @@
       $old_execute = mysqli_query($connection,$old_data_query);
     
         $old_data = mysqli_fetch_assoc($old_execute);
-
+      }
+      else{
+        header("location:projects.php");
+      }
     
     
     
@@ -979,25 +983,26 @@
                 $access_sizes = $old_data["Attachment_sizes"];
                 $access_files = explode(" ",$access_files);
                 $access_sizes = explode(" ", $access_sizes);
- #----------print_r($access_sizes);-----------------------------------question....?
+              
       #-------count of the files--------
                 $count  = count($access_files) - 1;          
                 for($i=0;$i < $count; ++$i){
                   $file_name = $access_files[$i];
-                  $size = $access_sizes[$i +1];
-                  $size_in_kb = floatval($size/1000);
-                ?>
+                  $size = $access_sizes[$i];
+  #---------checking whether is there any entry or not if not then don't print any row------------                
+                  if($file_name && $size){  ?>
                   <tr>
                     <td><?php echo $file_name; ?></td>
-                    <td><?php echo $size_in_kb.'kb'; ?></td>
+                    <td><?php echo $size; ?></td>
                     <td class="text-right py-0 align-middle">
                       <div class="btn-group btn-group-sm">
                         <a href="http://localhost/AdminLTE-3.1.0/AdminLTE-3.1.0/pages/examples/phfiles/attachments/<?php echo $file_name;  ?>" class="btn btn-info"  target="_blank"><i class="fas fa-eye"></i></a>
-                        <a href="phfiles/delete.php?ID=<?php echo $id; ?>&file=<?php echo $file_name;   ?>" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                        <a href="phfiles/delete.php?ID=<?php echo $id; ?>&file=<?php echo $file_name; ?>&filesize=<?php echo $size; ?>" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                       </div>
                     </td>
                   <tr>
               <?php
+                  }
                 }
                  ?>   
                 </tbody>
@@ -1086,8 +1091,7 @@
 
         <?php    
             
-            }
-
+             }
       }
     } 
   }

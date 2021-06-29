@@ -859,7 +859,7 @@
     </section>
     <?php     
         include"phfiles/dbconn.php";
-
+        if(isset($_GET['ID'])){
 #-------------get id from url------------------------        
         $id = $_GET['ID'];
 
@@ -867,7 +867,9 @@
         $data_access = mysqli_query($connection,$data_query);
         
         $row = mysqli_fetch_assoc($data_access);
-
+        
+        }
+        else{ header("Location:projects.php"); }
 
     ?>
 
@@ -1003,33 +1005,33 @@
                 $files_access = explode(" ",$files_access);
                 $count = count($files_access) - 1 ;
                 for($i=0;$i<$count;$i++){
-                    $file = $files_access[$i];
+                    $file = $files_access[$i];  #-----check whether file is their or not------------
+                    if($file){
                 ?>
                 <li>
                   <a href="http://localhost/AdminLTE-3.1.0/AdminLTE-3.1.0/pages/examples/phfiles/attachments/<?php echo $file;  ?>" class="btn-link text-secondary" target="_blank"><i class="far fa-fw fa-file-word"></i> <?php echo $file;  ?></a>
                 </li>
               <?php 
-                }  #------------closing brackets of the loop--------------------
-                ?>      
+                  }
+                } #------------closing brackets of the loop-------------------------
+                ?>  
+
+              
               </ul>
-              <div class="text-center mt-5 mb-3">                
-                  <input type="file" id="upload" style="display: none;"/>
-                <a href="" id="file_upload" class="btn btn-sm btn-primary">Add files</a>
+              <div class="text-center mt-5 mb-3"> 
+                <label>
+                <input type="file" name = "upload[]" id="upload" style="display: none" multiple/>               
+                <a  class="btn btn-sm btn-primary" >Add files</a>
+                </label>
                 <a href="#" class="btn btn-sm btn-warning">Report contact</a>
-              </div>
+              
+             </div>
+               
             </div>
           </div>
         </div>
         <!-- /.card-body -->
-<!--  script tag to use button as input type file -->
-        <script> 
-        $(function(){
-                  $("#file_upload").on('click', function(e){
-                  e.preventDefault();
-                  $("#upload:hidden").trigger('click');
-              });
-          });
-       </script>
+
       </div>
       <!-- /.card -->
 

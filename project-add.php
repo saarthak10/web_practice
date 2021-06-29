@@ -947,8 +947,8 @@
             </div>
             <div class="card-body">
               <div class="form-group">
-                <label for="uploaded_files[]">UPLOAD </label>
-                <input type="file"  name="uploaded_files[]"   name="uploaded_files" class="form-control"  multiple/>
+                <label for="uploaded_files">UPLOAD </label>
+                <input type="file"  name="uploaded_files[]"    class="form-control"  multiple/>
               </div>
              
             </div>
@@ -1033,18 +1033,18 @@
           $file_size = "";
           $file_location = "phfiles/attachments/";
           $data = '';  # variable to store filenames in the database
-          $data_sizes = " ";# variable to store file sizes
+          $data_sizes = "";# variable to store file sizes
 
-
-#-------------------------moving all the uploaded files from temporary location to their destination------------          
+          #-------------------------moving all the uploaded files from temporary location to their destination------------          
           foreach($_FILES['uploaded_files']['name'] as $key => $value){
             $filename = $_FILES['uploaded_files']['name'][$key];
             $file_tmp = $_FILES['uploaded_files']['tmp_name'][$key];
             $file_size = $_FILES['uploaded_files']['size'][$key];
             move_uploaded_file($file_tmp,$file_location.$filename);
             $data .=$filename." ";
-            $data_sizes .=$file_size." ";    
+            $data_sizes.=$file_size." ";    
            }
+
            $insert_query = "insert into projects(Project_Name,Description,Status,Client_Org,Project_Lead,Estimated_budget,Amount_spent,Project_duration,Attachments,Attachment_sizes) 
                         values('$pname','$pdesc','$pstatus','$pclientcompany','$pleader','$pbudget','$pspentbudget','$pduration','$data','$data_sizes')" ;
             $execute = mysqli_query($connection,$insert_query);
@@ -1053,14 +1053,12 @@
             <script>alert("Project added successfully");</script>
         <?php    
                         
-        }
+        }else{ echo mysqli_error($connection);}
        }
        else{
           ?>
-         
-          <script> alert("Please Upload files ");</script>
-       
-       <?php
+           <script> alert("Please Upload files ");</script>
+        <?php
        }
       }
     } 
