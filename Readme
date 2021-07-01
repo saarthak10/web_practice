@@ -1,0 +1,5 @@
+1.) This project involves me to configure user registration , login and user's projects record.
+2.) First I have configured the register.php file which aims at registering a new user at the portal ,alongwith proper server side validations of the user details.
+3.) Then the user is redirected to the login page i.e (login.php) which involves that after login only the user is able to watch the projects he has done so far.
+4.) After login the user is redirected to projects.php page where he can see the projects and each record includes three action i.e to view , to edit and to delete the projects.
+#key point--> The concept of sessions is used therefore only registered users can access the projects and associated pages.  
